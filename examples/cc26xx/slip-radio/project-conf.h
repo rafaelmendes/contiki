@@ -37,7 +37,12 @@
 #define UIP_CONF_BUFFER_SIZE    140
 */
 
+ /* Enable the ROM bootloader */
+#define ROM_BOOTLOADER_ENABLE                 1
+
 #define RF_CORE_CONF_CHANNEL	25
+
+#define IEEE802154_CONF_PANID            0xABCD
 
 #undef UIP_CONF_ROUTER
 #define UIP_CONF_ROUTER                 0

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Swedish Institute of Computer Science.
+ * Copyright (c) 2014, CETIC.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,50 +25,46 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
  */
 
-#ifndef PROJECT_ROUTER_CONF_H_
-#define PROJECT_ROUTER_CONF_H_
+/**
+ * \file
+ *         Simple CoAP Library
+ * \author
+ *         6LBR Team <6lbr@cetic.be>
+ */
+#ifndef COAP_PUSH_H_
+#define COAP_PUSH_H_
 
-#ifndef WITH_NON_STORING
-#define WITH_NON_STORING 0 /* Set this to run with non-storing mode */
-#endif /* WITH_NON_STORING */
+#include "contiki.h"
+#include "coap-binding.h"
 
-#if WITH_NON_STORING
-#undef RPL_NS_CONF_LINK_NUM
-#define RPL_NS_CONF_LINK_NUM 40 /* Number of links maintained at the root */
-#undef UIP_CONF_MAX_ROUTES
-#define UIP_CONF_MAX_ROUTES 0 /* No need for routes */
-#undef RPL_CONF_MOP
-#define RPL_CONF_MOP RPL_MOP_NON_STORING /* Mode of operation*/
-#endif /* WITH_NON_STORING */
-
-#ifndef UIP_FALLBACK_INTERFACE
-#define UIP_FALLBACK_INTERFACE rpl_interface
+#ifdef COAP_PUSH_CONF_ENABLED
+#define COAP_PUSH_ENABLED COAP_PUSH_CONF_ENABLED
+#else
+#define COAP_PUSH_ENABLED 1
 #endif
 
-#ifndef QUEUEBUF_CONF_NUM
-#define QUEUEBUF_CONF_NUM          4
-#endif
+#define COAP_PUSH_CONF_DEFAULT_PMIN 10
+#define COAP_PUSH_CONF_DEFAULT_PMAX 0
 
-/*
-#ifndef UIP_CONF_BUFFER_SIZE
-#define UIP_CONF_BUFFER_SIZE    140
-#endif
+#define COAP_BINDING(name, resource_name) \
+  extern resource_t resource_##resource_name; \
+  coap_binding_t binding_##name = { NULL, &resource_##resource_name, {}, COAP_DEFAULT_PORT, {}, 0, COAP_PUSH_CONF_DEFAULT_PMIN, COAP_PUSH_CONF_DEFAULT_PMAX };
 
-#ifndef UIP_CONF_RECEIVE_WINDOW
-#define UIP_CONF_RECEIVE_WINDOW  60
-#endif
-*/
+void
+coap_push_init();
 
-#define RF_CORE_CONF_CHANNEL 25
+list_t
+coap_push_get_bindings(void);
 
-/* Enable the ROM bootloader */
-#define ROM_BOOTLOADER_ENABLE                 1
+int
+coap_push_add_binding(coap_binding_t * binding);
 
-#ifndef WEBSERVER_CONF_CFS_CONNS
-#define WEBSERVER_CONF_CFS_CONNS 2
-#endif
+int
+coap_push_remove_binding(coap_binding_t * binding);
 
-#endif /* PROJECT_ROUTER_CONF_H_ */
+void
+coap_push_update_binding(resource_t *event_resource, int value);
+
+#endif /* COAP_PUSH_H_ */

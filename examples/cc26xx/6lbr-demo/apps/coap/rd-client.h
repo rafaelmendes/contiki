@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Swedish Institute of Computer Science.
+ * Copyright (c) 2015, CETIC.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,50 +25,50 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
  */
 
-#ifndef PROJECT_ROUTER_CONF_H_
-#define PROJECT_ROUTER_CONF_H_
+/**
+ * \file
+ *         Simple CoAP Library
+ * \author
+ *         6LBR Team <6lbr@cetic.be>
+ */
+#ifndef RD_CLIENT_H_
+#define RD_CLIENT_H_
 
-#ifndef WITH_NON_STORING
-#define WITH_NON_STORING 0 /* Set this to run with non-storing mode */
-#endif /* WITH_NON_STORING */
+#include "contiki.h"
+#include "contiki-net.h"
 
-#if WITH_NON_STORING
-#undef RPL_NS_CONF_LINK_NUM
-#define RPL_NS_CONF_LINK_NUM 40 /* Number of links maintained at the root */
-#undef UIP_CONF_MAX_ROUTES
-#define UIP_CONF_MAX_ROUTES 0 /* No need for routes */
-#undef RPL_CONF_MOP
-#define RPL_CONF_MOP RPL_MOP_NON_STORING /* Mode of operation*/
-#endif /* WITH_NON_STORING */
-
-#ifndef UIP_FALLBACK_INTERFACE
-#define UIP_FALLBACK_INTERFACE rpl_interface
+#ifdef RD_CLIENT_CONF_ENABLED
+#define RD_CLIENT_ENABLED RD_CLIENT_CONF_ENABLED
+#else
+#define RD_CLIENT_ENABLED 1
 #endif
 
-#ifndef QUEUEBUF_CONF_NUM
-#define QUEUEBUF_CONF_NUM          4
+#ifdef RD_CLIENT_CONF_LIFETIME
+#define RD_CLIENT_LIFETIME RD_CLIENT_CONF_LIFETIME
+#else
+#define RD_CLIENT_LIFETIME 60
 #endif
 
-/*
-#ifndef UIP_CONF_BUFFER_SIZE
-#define UIP_CONF_BUFFER_SIZE    140
-#endif
+enum rd_client_status_t
+{
+  RD_CLIENT_UNCONFIGURED,
+  RD_CLIENT_BOOTSTRAPPING,
+  RD_CLIENT_REGISTERING,
+  RD_CLIENT_REGISTERED,
+};
 
-#ifndef UIP_CONF_RECEIVE_WINDOW
-#define UIP_CONF_RECEIVE_WINDOW  60
-#endif
-*/
+void
+rd_client_init(void);
 
-#define RF_CORE_CONF_CHANNEL 25
+int
+rd_client_status(void);
 
-/* Enable the ROM bootloader */
-#define ROM_BOOTLOADER_ENABLE                 1
+void
+rd_client_set_rd_address(uip_ipaddr_t const *new_rd_server_ipaddr, uint16_t port);
 
-#ifndef WEBSERVER_CONF_CFS_CONNS
-#define WEBSERVER_CONF_CFS_CONNS 2
-#endif
+void
+rd_client_set_resources_list(char const * resources_list);
 
-#endif /* PROJECT_ROUTER_CONF_H_ */
+#endif /* RD_CLIENT_H_ */

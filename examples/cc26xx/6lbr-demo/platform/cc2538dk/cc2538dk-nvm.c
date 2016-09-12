@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, Swedish Institute of Computer Science.
+ * Copyright (c) 2013, CETIC.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,62 +25,70 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
- * This file is part of the Contiki operating system.
- *
  */
 
 /**
  * \file
- *         Testing the broadcast layer in Rime
+ *         NVM Interface for the Econotag platform
  * \author
- *         Adam Dunkels <adam@sics.se>
+ *         6LBR Team <6lbr@cetic.be>
  */
 
+#define LOG6LBR_MODULE "NVM"
+
 #include "contiki.h"
-#include "core/net/rime/rime.h"
-#include "random.h"
+#include "contiki-lib.h"
 
-#include "dev/button-sensor.h"
+#include "nvm-config.h"
+#include "nvm-itf.h"
 
-#include "dev/leds.h"
+//Temporarily
+//#include "log-6lbr.h"
+#include "stdio.h"
+#define LOG6LBR_INFO printf
+#define LOG6LBR_ERROR printf
+#define LOG6LBR_FATAL printf
 
-#include <stdio.h>
-/*---------------------------------------------------------------------------*/
-PROCESS(example_broadcast_process, "Broadcast example");
-AUTOSTART_PROCESSES(&example_broadcast_process);
-/*---------------------------------------------------------------------------*/
-static void
-broadcast_recv(struct broadcast_conn *c, const linkaddr_t *from)
+#include "rom-util.h"
+
+#define CETIC_6LBR_NVM_SIZE 2048
+// We use the penultimate flash page as our nvm
+//TODO: this must be updated for non 512K CC2538
+#define CETIC_6LBR_NVM_ADDRESS (0x00280000 - (2*CETIC_6LBR_NVM_SIZE))
+
+void
+nvm_data_read(void)
 {
-  printf("broadcast message received from %d.%d: '%s'\n",
-         from->u8[0], from->u8[1], (char *)packetbuf_dataptr());
+  LOG6LBR_INFO("Reading 6LBR NVM\n");
+  rom_util_memcpy( (void *)&nvm_data,
+   (void *)CETIC_6LBR_NVM_ADDRESS, sizeof(nvm_data_t));
 }
-static const struct broadcast_callbacks broadcast_call = {broadcast_recv};
-static struct broadcast_conn broadcast;
-/*---------------------------------------------------------------------------*/
-PROCESS_THREAD(example_broadcast_process, ev, data)
+
+void
+nvm_data_write(void)
 {
-  static struct etimer et;
-
-  PROCESS_EXITHANDLER(broadcast_close(&broadcast);)
-
-  PROCESS_BEGIN();
-
-  broadcast_open(&broadcast, 129, &broadcast_call);
-
-  while(1) {
-
-    /* Delay 2-4 seconds */
-    etimer_set(&et, CLOCK_SECOND * 4 + random_rand() % (CLOCK_SECOND * 4));
-
-    PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
-
-    packetbuf_copyfrom("Hello", 6);
-    broadcast_send(&broadcast);
-    printf("broadcast message sent\n");
+  long err;
+  int retry = 4;
+  while (retry > 0 ) {
+    LOG6LBR_INFO("Flashing 6LBR NVM\n");
+    err = rom_util_page_erase(CETIC_6LBR_NVM_ADDRESS, CETIC_6LBR_NVM_SIZE);
+    if ( err != 0 ) {
+      LOG6LBR_ERROR("erase error : %ld\n", err);
+    }
+    rom_util_program_flash( (uint32_t*)&nvm_data,
+     CETIC_6LBR_NVM_ADDRESS, (sizeof(nvm_data_t)/4+1)*4);
+    if ( err != 0 ) {
+      LOG6LBR_ERROR("write error : %ld\n", err);
+    }
+    if(rom_util_memcmp( (void *)&nvm_data, (void *)CETIC_6LBR_NVM_ADDRESS, sizeof(nvm_data_t)) == 0) {
+      break;
+    }
+    LOG6LBR_ERROR("verify NVM failed, retry\n");
+    retry--;
   }
-
-  PROCESS_END();
+  if(retry == 0) {
+    LOG6LBR_FATAL("Could not program 6LBR NVM !\n");
+  } else {
+    LOG6LBR_INFO("Flashing 6LBR NVM done\n");
+  }
 }
-/*---------------------------------------------------------------------------*/

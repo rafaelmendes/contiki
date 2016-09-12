@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Swedish Institute of Computer Science.
+ * Copyright (c) 2015, CETIC.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,50 +25,36 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
  */
 
-#ifndef PROJECT_ROUTER_CONF_H_
-#define PROJECT_ROUTER_CONF_H_
+/**
+ * \file
+ *         6LBR-Demo Project Configuration
+ * \author
+ *         6LBR Team <6lbr@cetic.be>
+ */
 
-#ifndef WITH_NON_STORING
-#define WITH_NON_STORING 0 /* Set this to run with non-storing mode */
-#endif /* WITH_NON_STORING */
+#ifndef CONTIKI_POWER_INFO_H
+#define CONTIKI_POWER_INFO_H
 
-#if WITH_NON_STORING
-#undef RPL_NS_CONF_LINK_NUM
-#define RPL_NS_CONF_LINK_NUM 40 /* Number of links maintained at the root */
-#undef UIP_CONF_MAX_ROUTES
-#define UIP_CONF_MAX_ROUTES 0 /* No need for routes */
-#undef RPL_CONF_MOP
-#define RPL_CONF_MOP RPL_MOP_NON_STORING /* Mode of operation*/
-#endif /* WITH_NON_STORING */
+#include "contiki.h"
 
-#ifndef UIP_FALLBACK_INTERFACE
-#define UIP_FALLBACK_INTERFACE rpl_interface
+#include "coap-common.h"
+#include "core-interface.h"
+
+#if WITH_LWM2M
+#include "lwm2m.h"
+#include "ipso-so.h"
 #endif
 
-#ifndef QUEUEBUF_CONF_NUM
-#define QUEUEBUF_CONF_NUM          4
+#if WITH_IPSO_APP_FW
+#include "ipso-app-fw.h"
 #endif
 
-/*
-#ifndef UIP_CONF_BUFFER_SIZE
-#define UIP_CONF_BUFFER_SIZE    140
+#include "contiki-resources.h"
+#include "battery-resource.h"
+
+#define LWM2M_DEVICE_POWER_VOLTAGE_DECLARE REST_RES_BATTERY_DECLARE
+#define LWM2M_DEVICE_POWER_VOLTAGE_REF REST_RES_BATTERY_REF
+
 #endif
-
-#ifndef UIP_CONF_RECEIVE_WINDOW
-#define UIP_CONF_RECEIVE_WINDOW  60
-#endif
-*/
-
-#define RF_CORE_CONF_CHANNEL 25
-
-/* Enable the ROM bootloader */
-#define ROM_BOOTLOADER_ENABLE                 1
-
-#ifndef WEBSERVER_CONF_CFS_CONNS
-#define WEBSERVER_CONF_CFS_CONNS 2
-#endif
-
-#endif /* PROJECT_ROUTER_CONF_H_ */

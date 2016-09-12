@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Swedish Institute of Computer Science.
+ * Copyright (c) 2013, CETIC.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,50 +25,30 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
  */
 
-#ifndef PROJECT_ROUTER_CONF_H_
-#define PROJECT_ROUTER_CONF_H_
+/**
+ * \file
+ *         6LBR-Demo Project Configuration
+ * \author
+ *         6LBR Team <6lbr@cetic.be>
+ */
 
-#ifndef WITH_NON_STORING
-#define WITH_NON_STORING 0 /* Set this to run with non-storing mode */
-#endif /* WITH_NON_STORING */
+#ifndef SKY_RESOURCES_H
+#define SKY_RESOURCES_H
 
-#if WITH_NON_STORING
-#undef RPL_NS_CONF_LINK_NUM
-#define RPL_NS_CONF_LINK_NUM 40 /* Number of links maintained at the root */
-#undef UIP_CONF_MAX_ROUTES
-#define UIP_CONF_MAX_ROUTES 0 /* No need for routes */
-#undef RPL_CONF_MOP
-#define RPL_CONF_MOP RPL_MOP_NON_STORING /* Mode of operation*/
-#endif /* WITH_NON_STORING */
+#define REST_CONF_PLATFORM_HAS_SOLAR 1
 
-#ifndef UIP_FALLBACK_INTERFACE
-#define UIP_FALLBACK_INTERFACE rpl_interface
-#endif
+#define REST_CONF_RES_SOLAR_SO_TYPE LUMIN
+#define REST_CONF_RES_SOLAR_SO_INSTANCE_ID "0"
+#define REST_CONF_RES_SOLAR_FORMAT COAP_RESOURCE_TYPE_UNSIGNED_INT
+#define REST_CONF_RES_SOLAR_IPSO_APP_FW_ID LIGHT_SOLAR_SENSOR_RES
 
-#ifndef QUEUEBUF_CONF_NUM
-#define QUEUEBUF_CONF_NUM          4
-#endif
+#define REST_CONF_PLATFORM_HAS_PHOTO 1
 
-/*
-#ifndef UIP_CONF_BUFFER_SIZE
-#define UIP_CONF_BUFFER_SIZE    140
-#endif
+#define REST_CONF_RES_PHOTO_SO_TYPE LUMIN
+#define REST_CONF_RES_PHOTO_SO_INSTANCE_ID "1"
+#define REST_CONF_RES_PHOTO_FORMAT COAP_RESOURCE_TYPE_UNSIGNED_INT
+#define REST_CONF_RES_PHOTO_IPSO_APP_FW_ID LIGHT_PHOTOSYNTHETIC_SENSOR_RES
 
-#ifndef UIP_CONF_RECEIVE_WINDOW
-#define UIP_CONF_RECEIVE_WINDOW  60
-#endif
-*/
-
-#define RF_CORE_CONF_CHANNEL 25
-
-/* Enable the ROM bootloader */
-#define ROM_BOOTLOADER_ENABLE                 1
-
-#ifndef WEBSERVER_CONF_CFS_CONNS
-#define WEBSERVER_CONF_CFS_CONNS 2
-#endif
-
-#endif /* PROJECT_ROUTER_CONF_H_ */
+#endif /* SKY_RESOURCES_H */

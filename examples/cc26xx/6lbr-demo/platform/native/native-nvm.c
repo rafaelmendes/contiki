@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, Swedish Institute of Computer Science.
+ * Copyright (c) 2016, CETIC.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,62 +25,71 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
- * This file is part of the Contiki operating system.
- *
  */
 
 /**
  * \file
- *         Testing the broadcast layer in Rime
+ *         NVM Interface for the native Linux platform
  * \author
- *         Adam Dunkels <adam@sics.se>
+ *         6LBR Team <6lbr@cetic.be>
  */
 
-#include "contiki.h"
-#include "core/net/rime/rime.h"
-#include "random.h"
+#define LOG6LBR_MODULE "NVM"
 
-#include "dev/button-sensor.h"
-
-#include "dev/leds.h"
-
+#include <contiki.h>
 #include <stdio.h>
-/*---------------------------------------------------------------------------*/
-PROCESS(example_broadcast_process, "Broadcast example");
-AUTOSTART_PROCESSES(&example_broadcast_process);
-/*---------------------------------------------------------------------------*/
-static void
-broadcast_recv(struct broadcast_conn *c, const linkaddr_t *from)
+#include <unistd.h>
+#include <fcntl.h>
+#include <string.h>
+#include "sys/node-id.h"
+
+//Temporarily
+//#include "log-6lbr.h"
+#include "stdio.h"
+#define LOG6LBR_DEBUG printf
+#define LOG6LBR_INFO printf
+#define LOG6LBR_ERROR printf
+#define LOG6LBR_FATAL printf
+
+#include "nvm-itf.h"
+#include "nvm-config.h"
+
+#define NVM_SIZE 0x800
+static uint8_t nvm_mem[NVM_SIZE];
+char nvm_file[50];
+
+void
+nvm_data_read(void)
 {
-  printf("broadcast message received from %d.%d: '%s'\n",
-         from->u8[0], from->u8[1], (char *)packetbuf_dataptr());
-}
-static const struct broadcast_callbacks broadcast_call = {broadcast_recv};
-static struct broadcast_conn broadcast;
-/*---------------------------------------------------------------------------*/
-PROCESS_THREAD(example_broadcast_process, ev, data)
-{
-  static struct etimer et;
-
-  PROCESS_EXITHANDLER(broadcast_close(&broadcast);)
-
-  PROCESS_BEGIN();
-
-  broadcast_open(&broadcast, 129, &broadcast_call);
-
-  while(1) {
-
-    /* Delay 2-4 seconds */
-    etimer_set(&et, CLOCK_SECOND * 4 + random_rand() % (CLOCK_SECOND * 4));
-
-    PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
-
-    packetbuf_copyfrom("Hello", 6);
-    broadcast_send(&broadcast);
-    printf("broadcast message sent\n");
+  snprintf(nvm_file, sizeof(nvm_file) - 1, "nvm-%02d.dat", node_id);
+  LOG6LBR_DEBUG("Opening nvm file '%s'\n", nvm_file);
+  memset(nvm_mem, 0xff, NVM_SIZE);
+  int s = open(nvm_file, O_RDONLY);
+  if(s > 0) {
+    if(read(s, nvm_mem, NVM_SIZE) < 0) {
+      LOG6LBR_ERROR("Failed to read NVM");
+    }
+    close(s);
+  } else {
+    LOG6LBR_ERROR("Could not open nvm file\n");
   }
-
-  PROCESS_END();
+  memcpy((uint8_t *) & nvm_data, nvm_mem, sizeof(nvm_data));
 }
-/*---------------------------------------------------------------------------*/
+
+void
+nvm_data_write(void)
+{
+  snprintf(nvm_file, sizeof(nvm_file) - 1, "nvm-%02d.dat", node_id);
+  memcpy(nvm_mem, (uint8_t *) & nvm_data, sizeof(nvm_data));
+  LOG6LBR_DEBUG("Opening nvm file '%s'\n", nvm_file);
+  int s = open(nvm_file, O_WRONLY | O_TRUNC | O_CREAT, 0644);
+
+  if(s > 0) {
+    if(write(s, nvm_mem, NVM_SIZE) != NVM_SIZE) {
+      LOG6LBR_ERROR("Failed to write to NVM");
+    }
+    close(s);
+  } else {
+    LOG6LBR_ERROR("Could not open nvm file\n");
+  }
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, Swedish Institute of Computer Science.
+ * Copyright (c) 2014, CETIC.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,62 +25,51 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
- * This file is part of the Contiki operating system.
- *
  */
 
 /**
  * \file
- *         Testing the broadcast layer in Rime
+ *         Simple CoAP Library
  * \author
- *         Adam Dunkels <adam@sics.se>
+ *         6LBR Team <6lbr@cetic.be>
  */
-
 #include "contiki.h"
-#include "core/net/rime/rime.h"
-#include "random.h"
 
-#include "dev/button-sensor.h"
+#include "coap-common.h"
+#include "coap-push.h"
+#include "core-interface.h"
 
-#include "dev/leds.h"
+#include "ipso-app-fw.h"
+#include "ipso-profile.h"
 
-#include <stdio.h>
-/*---------------------------------------------------------------------------*/
-PROCESS(example_broadcast_process, "Broadcast example");
-AUTOSTART_PROCESSES(&example_broadcast_process);
-/*---------------------------------------------------------------------------*/
-static void
-broadcast_recv(struct broadcast_conn *c, const linkaddr_t *from)
+#include "device-resource.h"
+#include "config-stack-resource.h"
+#include "sensors-batch-resource.h"
+
+#include "linked-batch-resource.h"
+#include "binding-table-resource.h"
+
+#define DEBUG 0
+#include "uip-debug.h"
+
+//Define all resources
+REST_RES_DEVICE_DEFINE();
+
+void
+ipso_app_fw_init(void)
 {
-  printf("broadcast message received from %d.%d: '%s'\n",
-         from->u8[0], from->u8[1], (char *)packetbuf_dataptr());
-}
-static const struct broadcast_callbacks broadcast_call = {broadcast_recv};
-static struct broadcast_conn broadcast;
-/*---------------------------------------------------------------------------*/
-PROCESS_THREAD(example_broadcast_process, ev, data)
-{
-  static struct etimer et;
+  //Init all resources
+  REST_RES_DEVICE_INIT();
+  REST_RES_CONFIG_STACK_INIT();
 
-  PROCESS_EXITHANDLER(broadcast_close(&broadcast);)
+  /* Linked batch and binding tables must be initialized after all the resources */
+  REST_RES_LINKED_BATCH_INIT();
+  REST_RES_BINDING_TABLE_INIT();
 
-  PROCESS_BEGIN();
-
-  broadcast_open(&broadcast, 129, &broadcast_call);
-
+  /* TODO: Reactivate events
   while(1) {
-
-    /* Delay 2-4 seconds */
-    etimer_set(&et, CLOCK_SECOND * 4 + random_rand() % (CLOCK_SECOND * 4));
-
-    PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
-
-    packetbuf_copyfrom("Hello", 6);
-    broadcast_send(&broadcast);
-    printf("broadcast message sent\n");
+    PROCESS_WAIT_EVENT();
+    REST_RES_BUTTON_EVENT_HANDLER(ev, data);
   }
-
-  PROCESS_END();
+  */
 }
-/*---------------------------------------------------------------------------*/
