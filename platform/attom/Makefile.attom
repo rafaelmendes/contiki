@@ -1,5 +1,7 @@
 # attom platform makefile
 
+CFLAGS += -DUIP_FALLBACK_INTERFACE=ip64_uip_fallback_interface
+
 ifndef CONTIKI
   $(error CONTIKI not defined! You must specify where CONTIKI resides!)
 endif

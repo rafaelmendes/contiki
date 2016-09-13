@@ -59,7 +59,7 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /*---------------------------------------------------------------------------*/
-/** \addtogroup cc13xx-attom-router-peripherals
+/** \addtogroup attom-router-peripherals
  * @{
  *
  * Defines related to the AttoM Board with a TI CC1310.
@@ -72,18 +72,16 @@
  *
  * \note   Do not include this file directly.
  */
+
 #ifndef IP64_CONF_H
 #define IP64_CONF_H
 
-#include "ip64-eth-interface.h"
-
+#include "net/ip64/ip64-eth-interface.h"
+#include "dev/enc28j60/enc28j60-ip64-driver.h"
 #define IP64_CONF_UIP_FALLBACK_INTERFACE ip64_eth_interface
 #define IP64_CONF_INPUT                  ip64_eth_interface_input
-
-#include "enc28j60-ip64-driver.h"
-
-#define IP64_CONF_ETH_DRIVER             enc28j60_ip64_driver
 #define IP64_CONF_DHCP                   1
+#define IP64_CONF_ETH_DRIVER             enc28j60_ip64_driver
 
 #endif /* IP64_CONF_H */
 /**
