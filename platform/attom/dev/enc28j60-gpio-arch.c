@@ -37,8 +37,6 @@
  * with a TI CC1310.
  */
 /*---------------------------------------------------------------------------*/
-#include "board.h"
-#include "contiki.h"
 #include "clock.h"
 #include "ti-lib.h"
 /*---------------------------------------------------------------------------*/
@@ -61,24 +59,24 @@ enc28j60_arch_spi_write_byte(uint8_t output)
   for(i = 0; i < 8; i++) {
     /* Write data on MOSI pin */
     if(output & 0x80) {
-      ti_lib_gpio_pin_write(BOARD_SPI_ETHERNET_MOSI, 1);
+      ti_lib_gpio_write_dio(BOARD_IOID_SPI_MOSI, 1);
     } else {
-      ti_lib_gpio_pin_clear(BOARD_SPI_ETHERNET_MOSI);
+      ti_lib_gpio_clear_dio(BOARD_IOID_SPI_MOSI);
     }
     output <<= 1;
 
     /* Set clock high  */
-    ti_lib_gpio_pin_write(BOARD_SPI_ETHERNET_SCK, 1);
+    ti_lib_gpio_write_dio(BOARD_IOID_SPI_SCK, 1);
     delay();
 
     /* Read data from MISO pin */
     input <<= 1;
-    if(ti_lib_gpio_pin_read(BOARD_SPI_ETHERNET_MISO) != 0) {
+    if(ti_lib_gpio_read_dio(BOARD_IOID_SPI_MISO) != 0) {
       input |= 0x1;
     }
 
     /* Set clock low */
-    ti_lib_gpio_pin_clear(BOARD_SPI_ETHERNET_SCK);
+    ti_lib_gpio_clear_dio(BOARD_IOID_SPI_SCK);
     delay();
   }
   return input;
@@ -89,29 +87,29 @@ enc28j60_arch_spi_init(void)
 {
   /* GPIO pin configuration */
 
-  ti_lib_ioc_pin_type_gpio_input(BOARD_IOID_SPI_ETHERNET_MISO);
-  ti_lib_ioc_pin_type_gpio_output(BOARD_IOID_SPI_ETHERNET_MOSI);
-  ti_lib_ioc_pin_type_gpio_output(BOARD_IOID_SPI_ETHERNET_SCK);
-  ti_lib_ioc_pin_type_gpio_output(BOARD_IOID_SPI_ETHERNET_CS);
+  ti_lib_rom_ioc_pin_type_gpio_input(BOARD_IOID_SPI_MISO);
+  ti_lib_rom_ioc_pin_type_gpio_output(BOARD_IOID_SPI_MOSI);
+  ti_lib_rom_ioc_pin_type_gpio_output(BOARD_IOID_SPI_SCK);
+  ti_lib_rom_ioc_pin_type_gpio_output(BOARD_IOID_SPI_ETHERNET_CS);
 
   /* Default output to clear chip select */
-  ti_lib_gpio_pin_write(BOARD_SPI_ETHERNET_CS, 1);
+  ti_lib_gpio_write_dio(BOARD_IOID_SPI_ETHERNET_CS, 1);
 
   /* The CLK is active low, we set it high when we aren't using it. */
-  ti_lib_gpio_pin_clear(BOARD_SPI_ETHERNET_SCK);
+  ti_lib_gpio_clear_dio(BOARD_IOID_SPI_SCK);
 }
 /*---------------------------------------------------------------------------*/
 void
 enc28j60_arch_spi_select(void)
 {
-  ti_lib_gpio_pin_write(BOARD_SPI_ETHERNET_CS, 0);
+  ti_lib_gpio_write_dio(BOARD_IOID_SPI_ETHERNET_CS, 0);
   delay();
 }
 /*---------------------------------------------------------------------------*/
 void
 enc28j60_arch_spi_deselect(void)
 {
-  ti_lib_gpio_pin_write(BOARD_SPI_ETHERNET_CS, 1);
+  ti_lib_gpio_write_dio(BOARD_IOID_SPI_ETHERNET_CS, 1);
 }
 /*---------------------------------------------------------------------------*/
 uint8_t
