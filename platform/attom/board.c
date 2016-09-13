@@ -40,7 +40,7 @@
 #include "lib/sensors.h"
 #include "lpm.h"
 #include "ti-lib.h"
-#include "board-peripherals.h"
+#include "dev/board-peripherals.h"
 
 #include <stdint.h>
 #include <string.h>
