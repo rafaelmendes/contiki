@@ -10,7 +10,7 @@ CONTIKI_TARGET_DIRS += . dev
 PLATFORM_ROOT_DIR = $(CONTIKI)/platform/$(TARGET)
 
 CONTIKI_TARGET_SOURCEFILES += contiki-main.c board.c
-CONTIKI_TARGET_SOURCEFILES += leds-arch.c button-sensor.c sensors.c leds.c launchpad-sensors.c
+CONTIKI_TARGET_SOURCEFILES += leds-arch.c button-sensor.c sensors.c leds.c attom-sensors.c
 CONTIKI_TARGET_SOURCEFILES += ext-flash.c board-spi.c enc28j60-gpio-arch.c
 
 CONTIKI_SOURCEFILES += $(CONTIKI_TARGET_SOURCEFILES)
