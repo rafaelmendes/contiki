@@ -83,6 +83,7 @@
 #include "enc28j60-ip64-driver.h"
 
 #define IP64_CONF_ETH_DRIVER             enc28j60_ip64_driver
+#define IP64_CONF_DHCP                   1
 
 #endif /* IP64_CONF_H */
 /**
