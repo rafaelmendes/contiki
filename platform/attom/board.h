@@ -54,30 +54,6 @@
 /*---------------------------------------------------------------------------*/
 #include "ioc.h"
 /*---------------------------------------------------------------------------*/
-
-/*---------------------------------------------------------------------------*/
-/**
- * \name ENC28J60 SPI ETHERNET IOID mapping
- *
- * Those values are not meant to be modified by the user, for now using
- * same LCD configuration
- * @{
- */
-
-#define BOARD_IOID_SPI_ETHERNET_CS       IOID_14
-#define BOARD_IOID_SPI_ETHERNET_RST      IOID_5
-#define BOARD_IOID_SPI_ETHERNET_MISO     BOARD_IOID_SPI_MISO
-#define BOARD_IOID_SPI_ETHERNET_MOSI     BOARD_IOID_SPI_MOSI
-#define BOARD_IOID_SPI_ETHERNET_SCK      BOARD_IOID_SPI_SCK
-#define BOARD_SPI_ETHERNET_CS            (1 << BOARD_IOID_SPI_ETHERNET_CS)
-#define BOARD_SPI_ETHERNET_RST           (1 << BOARD_IOID_SPI_ETHERNET_RST)
-#define BOARD_SPI_ETHERNET_MISO          BOARD_SPI_MISO
-#define BOARD_SPI_ETHERNET_MOSI          BOARD_SPI_MOSI
-#define BOARD_SPI_ETHERNET_SCK           BOARD_SPI_SCK
-/** @} */
-/*---------------------------------------------------------------------------*/
-
-
 /**
  * \name LED configurations
  *
@@ -149,8 +125,12 @@
  * Those values are not meant to be modified by the user
  * @{
  */
+#define BOARD_IOID_SPI_SCK        IOID_10
 #define BOARD_IOID_SPI_MOSI       IOID_9
 #define BOARD_IOID_SPI_MISO       IOID_8
+#define BOARD_SPI_SCK             (1 << BOARD_IOID_SPI_SCK)
+#define BOARD_SPI_MOSI            (1 << BOARD_IOID_SPI_MOSI)
+#define BOARD_SPI_MISO            (1 << BOARD_IOID_SPI_MISO)
 /** @} */
 /*---------------------------------------------------------------------------*/
 /**
@@ -218,6 +198,26 @@
 #define BOARD_IOID_DIO29          IOID_29
 #define BOARD_IOID_DIO30          IOID_30
 /** @} */
+/*---------------------------------------------------------------------------*/
+/**
+ * \name ENC28J60 SPI ETHERNET IOID mapping
+ *
+ * Those values are not meant to be modified by the user, for now using
+ * same LCD configuration
+ * @{
+ */
+
+#define BOARD_IOID_SPI_ETHERNET_CS       IOID_14
+#define BOARD_IOID_SPI_ETHERNET_RST      IOID_5
+#define BOARD_IOID_SPI_ETHERNET_MISO     BOARD_IOID_SPI_MISO
+#define BOARD_IOID_SPI_ETHERNET_MOSI     BOARD_IOID_SPI_MOSI
+#define BOARD_IOID_SPI_ETHERNET_SCK      BOARD_IOID_SPI_SCK
+#define BOARD_SPI_ETHERNET_CS            (1 << BOARD_IOID_SPI_ETHERNET_CS)
+#define BOARD_SPI_ETHERNET_RST           (1 << BOARD_IOID_SPI_ETHERNET_RST)
+#define BOARD_SPI_ETHERNET_MISO          BOARD_SPI_MISO
+#define BOARD_SPI_ETHERNET_MOSI          BOARD_SPI_MOSI
+#define BOARD_SPI_ETHERNET_SCK           BOARD_SPI_SCK
+/** @} */ 	
 /*---------------------------------------------------------------------------*/
 /**
  * \name Device string used on startup
