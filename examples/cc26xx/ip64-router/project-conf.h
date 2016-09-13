@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Thingsquare, http://www.thingsquare.com/.
+ * Copyright (c) 2014, Texas Instruments Incorporated - http://www.ti.com/
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10,7 +10,6 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- *
  * 3. Neither the name of the copyright holder nor the names of its
  *    contributors may be used to endorse or promote products derived
  *    from this software without specific prior written permission.
@@ -27,26 +26,17 @@
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  * OF THE POSSIBILITY OF SUCH DAMAGE.
- *
  */
-#ifndef IP64_CONF_H
-#define IP64_CONF_H
-
-#include "ip64-tap-driver.h"
-#include "ip64-eth-interface.h"
-
-#define IP64_CONF_UIP_FALLBACK_INTERFACE    enc28j60
-#define IP64_CONF_INPUT                    enc28j60
-
-#define IP64_CONF_ETH_DRIVER                ip64_tap_driver
-
+/*---------------------------------------------------------------------------*/
+#ifndef PROJECT_CONF_H_
+#define PROJECT_CONF_H_
+/*---------------------------------------------------------------------------*/
+/* Disable button shutdown functionality */
 /*---------------------------------------------------------------------------*/
 /* Enable the ROM bootloader */
 #define ROM_BOOTLOADER_ENABLE                 1
-
-/* 
- * In contrast to the mandatory parameters above, IP64_CONF_DHCP is an 
- * optional configuration parameter. The default value is set in ip64.h 
- */
-/* #define IP64_CONF_DHCP                      1 */
-#endif /* IP64_CONF_H */
+/*---------------------------------------------------------------------------*/
+/* Change to match your configuration */
+/*---------------------------------------------------------------------------*/
+#endif /* PROJECT_CONF_H_ */
+/*---------------------------------------------------------------------------*/
