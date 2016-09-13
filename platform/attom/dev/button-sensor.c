@@ -38,7 +38,7 @@
 /*---------------------------------------------------------------------------*/
 #include "contiki.h"
 #include "lib/sensors.h"
-#include "launchpad/button-sensor.h"
+#include "button-sensor.h"
 #include "gpio-interrupt.h"
 #include "sys/timer.h"
 #include "lpm.h"
